@@ -27,6 +27,7 @@ def init_storage() -> None:
             CREATE TABLE IF NOT EXISTS sessions (
                 id TEXT PRIMARY KEY,
                 title TEXT,
+                status TEXT DEFAULT 'created',
                 youtube_url TEXT,
                 media_path TEXT,
                 audio_path TEXT,
@@ -65,6 +66,7 @@ class SessionCreateRequest(BaseModel):
 class SessionResponse(BaseModel):
     id: str
     title: Optional[str]
+    status: str
     youtube_url: Optional[str]
     media_path: Optional[str]
     audio_path: Optional[str]
@@ -120,7 +122,7 @@ def create_session(payload: SessionCreateRequest) -> SessionResponse:
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute(
             """
-            INSERT INTO sessions(id, title, youtube_url, created_at)
+            INSERT INTO sessions(id, title, status, youtube_url, created_at)
             VALUES (?, ?, ?, ?)
             """,
             (session_id, payload.title, payload.youtube_url, created_at),
@@ -167,7 +169,7 @@ async def upload_media(session_id: str, file: UploadFile = File(...)) -> Dict:
 
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute(
-            "UPDATE sessions SET media_path = ?, audio_path = NULL WHERE id = ?",
+            "UPDATE sessions SET status = 'uploaded', media_path = ?, audio_path = NULL WHERE id = ?",
             (str(dest_path), session_id),
         )
 
@@ -266,7 +268,7 @@ def process_media(session_id: str) -> Dict:
             dummy_chunks,
         )
         conn.execute(
-            "UPDATE sessions SET audio_path = ? WHERE id = ?",
+            "UPDATE sessions SET status = 'ready', audio_path = ? WHERE id = ?",
             (str(audio_path), session_id),
         )
 
