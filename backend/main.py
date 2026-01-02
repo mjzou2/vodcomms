@@ -72,6 +72,12 @@ class SessionResponse(BaseModel):
     audio_path: Optional[str]
     created_at: str
 
+class ChunkResponse(BaseModel):
+    id: str
+    session_id: str
+    start_ms: int
+    end_ms: int
+    text: str
 
 app = FastAPI(title="vodcomms MVP")
 
@@ -153,6 +159,10 @@ def get_session(session_id: str) -> Dict:
     chunks = fetch_chunks(session_id)
     return {"session": session, "chunks": chunks}
 
+@app.get("/sessions/{session_id}/chunks", response_model=List[ChunkResponse])
+def get_chunks(session_id: str) -> List[ChunkResponse]:
+    fetch_session(session_id)
+    return [ChunkResponse(**c) for c in fetch_chunks(session_id)]
 
 @app.post("/sessions/{session_id}/media")
 async def upload_media(session_id: str, file: UploadFile = File(...)) -> Dict:
