@@ -65,11 +65,11 @@ class SessionCreateRequest(BaseModel):
 
 class SessionResponse(BaseModel):
     id: str
-    title: Optional[str]
-    status: str
-    youtube_url: Optional[str]
-    media_path: Optional[str]
-    audio_path: Optional[str]
+    title: Optional[str] = None
+    status: Optional[str] = None
+    youtube_url: Optional[str] = None
+    media_path: Optional[str] = None
+    audio_path: Optional[str] = None
     created_at: str
 
 class ChunkResponse(BaseModel):
@@ -128,7 +128,7 @@ def create_session(payload: SessionCreateRequest) -> SessionResponse:
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute(
             """
-            INSERT INTO sessions(id, title, status, youtube_url, created_at)
+            INSERT INTO sessions(id, title, youtube_url, created_at)
             VALUES (?, ?, ?, ?)
             """,
             (session_id, payload.title, payload.youtube_url, created_at),
@@ -136,6 +136,7 @@ def create_session(payload: SessionCreateRequest) -> SessionResponse:
     return SessionResponse(
         id=session_id,
         title=payload.title,
+        status="created",
         youtube_url=payload.youtube_url,
         media_path=None,
         audio_path=None,

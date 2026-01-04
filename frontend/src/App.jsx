@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import SessionDetails from './components/SessionDetails'
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
@@ -129,6 +130,7 @@ function App() {
       const data = await res.json()
       setChunks(data.chunks || [])
       setStatus('Chunks ready')
+      await loadSessionDetails(sessionId)
       await loadSessions()
     } catch (err) {
       setError(err.message)
@@ -222,7 +224,7 @@ function App() {
               type="button"
               className="ghost"
               onClick={handleProcess}
-              disabled={isProcessing}
+              disabled={isProcessing || !sessionDetails?.media_path}
             >
               {isProcessing ? 'Processing...' : 'Process (dummy chunks)'}
             </button>
@@ -264,6 +266,8 @@ function App() {
             ))}
           </div>
         </div>
+
+        <SessionDetails session={sessionDetails} />
 
         <div className="panel">
           <div className="panel-header">
