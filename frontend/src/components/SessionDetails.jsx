@@ -17,7 +17,7 @@ export default function SessionDetails({ session }) {
           <strong>YouTube:</strong>{' '}
           {session.youtube_url ? (
             <a href={session.youtube_url} target="_blank" rel="noreferrer">
-              {session.youtube_url}
+              link
             </a>
           ) : (
             <span>—</span>
