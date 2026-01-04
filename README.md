@@ -1,3 +1,14 @@
+## Dependencies
+
+### System
+- ffmpeg (required for video → audio extraction)
+- sqlite3 (optional, for inspecting the DB)
+
+Install:
+```bash
+sudo apt update
+sudo apt install -y ffmpeg sqlite3
+
 ## Run backend
 
 cd .../vodcomms/backend

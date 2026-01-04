@@ -20,7 +20,7 @@ Goal: make review faster, clearer, and less argumentative.
 
 **Pipeline**
 1) Extract/standardize audio (ffmpeg)
-2) Transcribe with timestamps
+2) Transcribe with timestamps (faster-whisper)
 3) Chunk transcript into time windows
 4) Store in SQLite
 5) Search (keyword + semantic)
